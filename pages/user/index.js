@@ -22,21 +22,45 @@ Page({
 
   // 登录
   login() {
-    wx.getUserProfile({
-      desc: '用于完善用户资料',
-      success: (res) => {
-        const app = getApp()
-        app.globalData.userInfo = res.userInfo
-        this.setData({
-          userInfo: res.userInfo
-        })
-        wx.showToast({
-          title: '登录成功',
-          icon: 'success'
-        })
+    wx.showLoading({
+      title: '登录中...'
+    })
+
+    // 调用登录云函数
+    wx.cloud.callFunction({
+      name: 'login',
+      data: {},
+      success: res => {
+        wx.hideLoading()
+        const result = res.result
+
+        if (result.code === 0) {
+          const app = getApp()
+          app.globalData.openid = result.data.openid
+          app.globalData.userInfo = result.data.user
+
+          this.setData({
+            userInfo: result.data.user
+          })
+
+          wx.showToast({
+            title: '登录成功',
+            icon: 'success'
+          })
+        } else {
+          wx.showToast({
+            title: result.message || '登录失败',
+            icon: 'none'
+          })
+        }
       },
-      fail: (err) => {
+      fail: err => {
+        wx.hideLoading()
         console.error('登录失败', err)
+        wx.showToast({
+          title: '登录失败',
+          icon: 'none'
+        })
       }
     })
   },

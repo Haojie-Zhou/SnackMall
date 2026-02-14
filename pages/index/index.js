@@ -57,8 +57,34 @@ Page({
 
   // 加载商品数据
   loadGoods() {
-    // 实际项目中这里应该调用后端 API
-    console.log('加载商品数据')
+    wx.showLoading({ title: '加载中...' })
+
+    // 调用商品云函数
+    wx.cloud.callFunction({
+      name: 'products',
+      data: {
+        action: 'list'
+      },
+      success: res => {
+        wx.hideLoading()
+        const result = res.result
+
+        if (result.code === 0) {
+          this.setData({
+            goodsList: result.data
+          })
+        } else {
+          wx.showToast({
+            title: result.message || '加载失败',
+            icon: 'none'
+          })
+        }
+      },
+      fail: err => {
+        wx.hideLoading()
+        console.error('加载商品失败', err)
+      }
+    })
   },
 
   // 搜索商品
