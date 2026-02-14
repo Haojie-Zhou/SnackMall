@@ -1,0 +1,40 @@
+<!--pages/category/index.wxml-->
+<view class="container">
+  <view class="category-layout">
+    <!-- 左侧分类列表 -->
+    <scroll-view class="category-left" scroll-y="{{true}}">
+      <view
+        class="category-item {{activeIndex === index ? 'active' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="id"
+        bindtap="onCategoryClick"
+        data-index="{{index}}"
+        data-id="{{item.id}}"
+      >
+        {{item.name}}
+      </view>
+    </scroll-view>
+
+    <!-- 右侧商品列表 -->
+    <scroll-view class="category-right" scroll-y="{{true}}">
+      <view class="category-title">{{activeCategoryName}}</view>
+      <view class="goods-list">
+        <view
+          class="goods-item"
+          wx:for="{{goodsList}}"
+          wx:key="id"
+          bindtap="goToDetail"
+          data-id="{{item.id}}"
+        >
+          <image src="{{item.image}}" mode="aspectFill" />
+          <view class="goods-info">
+            <view class="goods-name">{{item.name}}</view>
+            <view class="goods-price">
+              <text class="price">¥{{item.price}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>

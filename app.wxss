@@ -1,0 +1,32 @@
+/**app.wxss**/
+page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* 通用样式 */
+.btn-primary {
+  background-color: #fa2a2a;
+  color: white;
+  border-radius: 4px;
+  padding: 10rpx 20rpx;
+}
+
+.price {
+  color: #fa2a2a;
+  font-weight: bold;
+}
+
+.original-price {
+  color: #999;
+  text-decoration: line-through;
+  font-size: 24rpx;
+}

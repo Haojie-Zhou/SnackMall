@@ -1,0 +1,60 @@
+<!--pages/user/index.wxml-->
+<view class="container">
+  <!-- 用户信息 -->
+  <view class="user-header">
+    <image class="avatar" src="{{userInfo.avatar || '/images/avatar.png'}}" />
+    <view class="user-info">
+      <view class="nickname">{{userInfo.nickName || '未登录'}}</view>
+      <view wx:if="{{!userInfo.nickName}}" bindtap="login" class="login-btn">点击登录</view>
+    </view>
+  </view>
+
+  <!-- 订单状态 -->
+  <view class="order-status">
+    <view class="status-item" bindtap="goToOrderList" data-type="pending">
+      <image src="/images/order-pending.png" />
+      <text>待付款</text>
+    </view>
+    <view class="status-item" bindtap="goToOrderList" data-type="paid">
+      <image src="/images/order-paid.png" />
+      <text>待发货</text>
+    </view>
+    <view class="status-item" bindtap="goToOrderList" data-type="shipped">
+      <image src="/images/order-shipped.png" />
+      <text>待收货</text>
+    </view>
+    <view class="status-item" bindtap="goToOrderList" data-type="completed">
+      <image src="/images/order-completed.png" />
+      <text>已完成</text>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-list">
+    <view class="menu-item" bindtap="goToAddress">
+      <image src="/images/address.png" />
+      <text>收货地址</text>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goToOrders">
+      <image src="/images/orders.png" />
+      <text>我的订单</text>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goToFavorites">
+      <image src="/images/favorites.png" />
+      <text>我的收藏</text>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goToSettings">
+      <image src="/images/settings.png" />
+      <text>设置</text>
+      <text class="arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="contactService">
+      <image src="/images/service.png" />
+      <text>联系客服</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+</view>
