@@ -14,6 +14,21 @@ exports.main = async (event, context) => {
   const { action, category_id, product_id, keyword, skip = 0, limit = 20 } = event
 
   try {
+    if (action === 'list_categories') {
+      // 获取分类列表
+      const { data } = await db.collection('categories')
+        .where({
+          is_active: true
+        })
+        .orderBy('sort_order', 'asc')
+        .get()
+
+      return {
+        code: 0,
+        data: data
+      }
+    }
+
     if (action === 'list') {
       // 获取商品列表
       const { data } = await db.collection('products')

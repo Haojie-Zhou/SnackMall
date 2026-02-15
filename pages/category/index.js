@@ -4,68 +4,107 @@ Page({
     activeIndex: 0,
     activeCategoryId: 0,
     activeCategoryName: '',
-    categories: [
-      { id: 0, name: '全部商品' },
-      { id: 1, name: '电子产品' },
-      { id: 2, name: '服装鞋包' },
-      { id: 3, name: '食品饮料' },
-      { id: 4, name: '家居生活' },
-      { id: 5, name: '美妆护肤' },
-      { id: 6, name: '图书文具' },
-      { id: 7, name: '运动户外' }
-    ],
+    categories: [],
     goodsList: []
   },
 
   onLoad() {
-    this.loadCategoryGoods(0)
+    this.loadCategories()
+  },
+
+  onShow() {
+    if (this.data.categories.length > 0) {
+      this.loadCategoryGoods(this.data.activeCategoryId)
+    }
+  },
+
+  // 加载分类列表
+  loadCategories() {
+    wx.showLoading({ title: '加载中...' })
+
+    // 从云数据库加载分类
+    wx.cloud.callFunction({
+      name: 'products',
+      data: {
+        action: 'list_categories'
+      },
+      success: res => {
+        wx.hideLoading()
+        const result = res.result
+
+        if (result.code === 0) {
+          // 添加"全部"分类
+          const allCategories = [
+            { id: 0, name: '全部商品' },
+            ...result.data
+          ]
+
+          this.setData({
+            categories: allCategories
+          })
+          this.loadCategoryGoods(0)
+        } else {
+          wx.showToast({
+            title: result.message || '加载分类失败',
+            icon: 'none'
+          })
+        }
+      },
+      fail: err => {
+        wx.hideLoading()
+        console.error('加载分类失败', err)
+        wx.showToast({
+          title: '加载分类失败',
+          icon: 'none'
+        })
+      }
+    })
   },
 
   // 点击分类
   onCategoryClick(e) {
     const index = e.currentTarget.dataset.index
     const categoryId = e.currentTarget.dataset.id
+    const categoryName = this.data.categories[index].name
+
     this.setData({
       activeIndex: index,
       activeCategoryId: categoryId,
-      activeCategoryName: this.data.categories[index].name
+      activeCategoryName: categoryName
     })
     this.loadCategoryGoods(categoryId)
   },
 
   // 加载分类商品
   loadCategoryGoods(categoryId) {
-    // 模拟数据，实际应该调用后端 API
-    const mockGoods = [
-      {
-        id: 1,
-        name: '商品1',
-        price: '99.00',
-        image: '/images/goods1.jpg'
-      },
-      {
-        id: 2,
-        name: '商品2',
-        price: '199.00',
-        image: '/images/goods2.jpg'
-      },
-      {
-        id: 3,
-        name: '商品3',
-        price: '299.00',
-        image: '/images/goods3.jpg'
-      },
-      {
-        id: 4,
-        name: '商品4',
-        price: '399.00',
-        image: '/images/goods4.jpg'
-      }
-    ]
+    wx.showLoading({ title: '加载中...' })
 
-    this.setData({
-      goodsList: mockGoods,
-      activeCategoryName: this.data.categories[categoryId].name
+    // 调用商品云函数
+    wx.cloud.callFunction({
+      name: 'products',
+      data: {
+        action: 'list',
+        category_id: categoryId === 0 ? undefined : categoryId
+      },
+      success: res => {
+        wx.hideLoading()
+        const result = res.result
+
+        if (result.code === 0) {
+          this.setData({
+            goodsList: result.data
+          })
+        } else {
+          wx.showToast({
+            title: result.message || '加载商品失败',
+            icon: 'none'
+          })
+        }
+      },
+      fail: err => {
+        wx.hideLoading()
+        console.error('加载商品失败', err)
+      }
     })
   },
 
