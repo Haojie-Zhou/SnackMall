@@ -112,7 +112,7 @@ Page({
 
   // 去首页
   goToHome() {
-    wx.switchTab({
+    wx.reLaunch({
       url: '/pages/index/index'
     })
   }
