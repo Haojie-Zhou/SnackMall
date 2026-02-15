@@ -75,5 +75,19 @@ Page({
     wx.navigateTo({
       url: `/pages/detail/index?id=${id}`
     })
+  },
+
+  // 页面导航
+  navigateTo(e) {
+    const page = e.currentTarget.dataset.page
+    if (page === 'index') {
+      wx.reLaunch({
+        url: '/pages/index/index'
+      })
+    } else {
+      wx.navigateTo({
+        url: `/pages/${page}/index`
+      })
+    }
   }
 })
