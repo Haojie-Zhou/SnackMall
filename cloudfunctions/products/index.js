@@ -11,7 +11,7 @@ const _ = db.command
  * 获取商品列表
  */
 exports.main = async (event, context) => {
-  const { action, category_id, product_id, skip = 0, limit = 20 } = event
+  const { action, category_id, product_id, keyword, skip = 0, limit = 20 } = event
 
   try {
     if (action === 'list') {
@@ -36,6 +36,32 @@ exports.main = async (event, context) => {
       // 获取商品详情
       const { data } = await db.collection('products')
         .doc(product_id)
+        .get()
+
+      return {
+        code: 0,
+        data: data
+      }
+    }
+
+    if (action === 'search') {
+      // 搜索商品
+      const whereCondition = {
+        is_active: true
+      }
+
+      if (keyword) {
+        // 模糊搜索商品名称和描述
+        whereCondition.name = db.RegExp({
+          regexp: keyword,
+          options: 'i'
+        })
+      }
+
+      const { data } = await db.collection('products')
+        .where(whereCondition)
+        .orderBy('sales', 'desc')
+        .limit(50)
         .get()
 
       return {

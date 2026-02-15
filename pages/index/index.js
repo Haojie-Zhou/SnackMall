@@ -90,7 +90,44 @@ Page({
   // 搜索商品
   onSearch(e) {
     const keyword = e.detail.value
-    console.log('搜索:', keyword)
+    if (!keyword || keyword.trim() === '') {
+      this.loadGoods()
+      return
+    }
+
+    wx.showLoading({ title: '搜索中...' })
+
+    // 调用商品云函数搜索
+    wx.cloud.callFunction({
+      name: 'products',
+      data: {
+        action: 'search',
+        keyword: keyword
+      },
+      success: res => {
+        wx.hideLoading()
+        const result = res.result
+
+        if (result.code === 0) {
+          this.setData({
+            goodsList: result.data
+          })
+          wx.showToast({
+            title: `找到 ${result.data.length} 个商品`,
+            icon: 'success'
+          })
+        } else {
+          wx.showToast({
+            title: result.message || '搜索失败',
+            icon: 'none'
+          })
+        }
+      },
+      fail: err => {
+        wx.hideLoading()
+        console.error('搜索失败', err)
+      }
+    })
   },
 
   // 跳转到商品详情
